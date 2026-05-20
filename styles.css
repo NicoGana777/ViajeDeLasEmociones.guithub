@@ -1998,6 +1998,96 @@ body {
   background: rgba(255,107,53,0.08);
 }
 
+.trip-system-complete {
+  border-color: rgba(247,201,72,0.46) !important;
+  box-shadow:
+    0 0 0 1px rgba(247,201,72,0.16),
+    0 0 34px rgba(239,125,154,0.22),
+    inset 0 0 30px rgba(247,201,72,0.055);
+}
+
+.trip-completion-seal {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.4rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(247,201,72,0.42);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 8% 50%, rgba(247,201,72,0.14), transparent 38%),
+    linear-gradient(135deg, rgba(239,125,154,0.16), rgba(104,216,198,0.08)),
+    rgba(10,18,31,0.78);
+  box-shadow:
+    0 18px 52px rgba(0,0,0,0.24),
+    0 0 40px rgba(247,201,72,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.trip-completion-orbit {
+  width: 62px;
+  height: 62px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 28px rgba(247,201,72,0.32), inset 0 0 22px rgba(247,201,72,0.08);
+}
+
+.trip-completion-orbit::before,
+.trip-completion-orbit::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.trip-completion-orbit::before {
+  inset: 13px;
+  border: 1px solid rgba(104,216,198,0.78);
+}
+
+.trip-completion-orbit::after {
+  width: 11px;
+  height: 11px;
+  right: 3px;
+  top: 10px;
+  background: var(--gold);
+  box-shadow: 0 0 18px var(--gold);
+}
+
+.trip-completion-copy span {
+  display: block;
+  margin-bottom: 0.28rem;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.trip-completion-copy strong {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.trip-completion-copy p {
+  color: var(--text-soft);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.btn-secondary.mission-ready {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(247,201,72,0.1);
+  box-shadow: 0 0 28px rgba(247,201,72,0.16);
+}
+
 .trip-nav {
   display: flex;
   align-items: center;
@@ -3390,4 +3480,313 @@ p,
 .pilot-log-label {
   color: color-mix(in srgb, var(--mission-color) 82%, #ffffff);
   font-weight: 700;
+}
+
+/* Final responsive and floating HUD controls */
+.pilot-log-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.pilot-log-close {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--mission-color) 44%, transparent);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.045);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pilot-log-close:hover,
+.pilot-log-close:focus-visible {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(240,163,107,0.12);
+  box-shadow: 0 0 22px rgba(240,163,107,0.2);
+  outline: none;
+}
+
+.pilot-log.is-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+img,
+canvas,
+svg,
+video {
+  max-width: 100%;
+}
+
+.section,
+.section-container,
+.system-frame,
+.intro-cockpit,
+.roleplay-layout,
+.radar-layout,
+.timon-layout,
+.trip-layout,
+.mision-steps,
+.memory-panel,
+.scene-board,
+.roulette-console {
+  min-width: 0;
+}
+
+.section {
+  overflow: clip;
+}
+
+.section-container {
+  width: min(1120px, calc(100vw - clamp(1.5rem, 5vw, 4rem)));
+}
+
+.section-title,
+.intro-title,
+.line1,
+.line2,
+.line3,
+.mr-title,
+.scene-card h3 {
+  overflow-wrap: anywhere;
+}
+
+.radar-layout,
+.timon-layout,
+.trip-layout,
+.roleplay-layout {
+  width: 100%;
+}
+
+.emotion-grid {
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+}
+
+.memory-board {
+  grid-template-columns: repeat(5, minmax(56px, 1fr));
+}
+
+.roulette-wheel span:nth-child(1) { transform: rotate(25deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-25deg); }
+.roulette-wheel span:nth-child(2) { transform: rotate(76deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-76deg); }
+.roulette-wheel span:nth-child(3) { transform: rotate(128deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-128deg); }
+.roulette-wheel span:nth-child(4) { transform: rotate(180deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-180deg); }
+.roulette-wheel span:nth-child(5) { transform: rotate(231deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-231deg); }
+.roulette-wheel span:nth-child(6) { transform: rotate(282deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-282deg); }
+.roulette-wheel span:nth-child(7) { transform: rotate(334deg) translate(0, clamp(-86px, -28vw, -64px)) rotate(-334deg); }
+
+@media (max-width: 1100px) {
+  .section {
+    padding-inline: clamp(1rem, 3vw, 2rem);
+  }
+
+  .radar-layout {
+    grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
+    gap: clamp(1.2rem, 3vw, 2rem);
+  }
+
+  .emotion-grid {
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  }
+
+  .section-title {
+    font-size: clamp(2.1rem, 6.4vw, 4.2rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .section {
+    min-height: auto;
+    padding-top: clamp(6.2rem, 12vw, 8rem);
+    padding-bottom: clamp(4rem, 8vw, 6rem);
+  }
+
+  .intro-cockpit {
+    min-height: auto;
+    padding-top: 5.5rem;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .radar-layout,
+  .timon-layout,
+  .trip-layout,
+  .roleplay-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .radar-screen,
+  .roulette-console {
+    justify-self: center;
+  }
+
+  .roulette-console {
+    position: relative;
+    top: 0;
+    width: min(420px, 100%);
+  }
+
+  .scene-board {
+    width: 100%;
+  }
+
+  .pilot-log {
+    right: 0.85rem;
+    bottom: 0.85rem;
+    width: min(320px, calc(100vw - 1.7rem));
+  }
+}
+
+@media (max-width: 700px) {
+  .nav {
+    align-items: stretch;
+  }
+
+  .nav-brand,
+  .nav-status {
+    justify-content: center;
+  }
+
+  .mission-meter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .intro-title {
+    gap: 0.25rem;
+  }
+
+  .intro-question {
+    padding: 1rem;
+  }
+
+  .mission-route {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .route-node {
+    width: 100%;
+    min-height: 54px;
+  }
+
+  .radar-screen {
+    width: min(320px, 80vw);
+  }
+
+  .emotion-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .emotion-btn {
+    min-height: 116px;
+  }
+
+  .emotion-brief,
+  .edp-row,
+  .scene-toolbar,
+  .timer-actions,
+  .trip-completion-seal,
+  .footer-inner {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .memory-board {
+    gap: 0.45rem;
+  }
+
+  .memory-card {
+    min-height: clamp(58px, 16vw, 78px);
+  }
+
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-display {
+    width: 100%;
+  }
+
+  .pilot-log {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    top: auto !important;
+    bottom: 0.75rem !important;
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-container {
+    width: min(100%, calc(100vw - 1.5rem));
+  }
+
+  .section {
+    padding-inline: 0.75rem;
+  }
+
+  .system-frame,
+  .scene-board,
+  .roulette-console,
+  .memory-panel,
+  .mision-result,
+  .emotion-data-panel {
+    padding: 0.9rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 11vw, 2.55rem);
+  }
+
+  .section-subtitle,
+  .section-brief,
+  .scene-card p,
+  .role-pill strong {
+    font-size: 0.98rem;
+  }
+
+  .emotion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .memory-board {
+    grid-template-columns: repeat(5, minmax(44px, 1fr));
+  }
+
+  .memory-front strong {
+    font-size: clamp(1.2rem, 6vw, 1.65rem);
+  }
+
+  .memory-front small,
+  .memory-back {
+    font-size: 0.58rem;
+  }
+
+  .roulette-shell {
+    width: min(230px, 74vw);
+  }
+
+  .pilot-log-top {
+    align-items: flex-start;
+  }
+
+  .pilot-log-orbit {
+    width: 36px;
+    height: 36px;
+  }
 }
