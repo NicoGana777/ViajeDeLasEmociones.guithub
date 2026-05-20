@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Viaje del Piloto Emocional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ─── STARS BACKGROUND ─── -->
+  <canvas id="starsCanvas"></canvas>
+
+  <!-- ─── MOVING ROCKET SILHOUETTES ─── -->
+  <div class="rocket-field" aria-hidden="true">
+    <div class="rocket-outline r1"></div>
+    <div class="rocket-outline r2"></div>
+    <div class="rocket-outline r3"></div>
+    <div class="rocket-outline r4"></div>
+  </div>
+
+  <div class="symbol-field" aria-hidden="true">
+    <span class="symbol-outline s-heart"></span>
+    <span class="symbol-outline s-pulse"></span>
+    <span class="symbol-outline s-network"></span>
+    <span class="symbol-outline s-compass"></span>
+    <span class="symbol-outline s-balance"></span>
+  </div>
+
+  <div class="ambient-field" aria-label="Figuras interactivas de la misión emocional">
+    <button class="ambient-glyph glyph-heart touch-glow g1" type="button" aria-label="Empatía" data-echo="Empatía: no cargas la emoción del otro, pero sí puedes acompañarla."></button>
+    <button class="ambient-glyph glyph-chat touch-glow g2" type="button" aria-label="Comunicación" data-echo="Comunicar también es cuidar el tono antes de soltar la respuesta."></button>
+    <button class="ambient-glyph glyph-compass touch-glow g3" type="button" aria-label="Dirección emocional" data-echo="Encauzar es darle dirección a lo que sientes, no esconderlo."></button>
+    <button class="ambient-glyph glyph-shield touch-glow g4" type="button" aria-label="Límites sanos" data-echo="Un límite sano protege sin atacar."></button>
+    <button class="ambient-glyph glyph-bolt touch-glow g5" type="button" aria-label="Motivación" data-echo="La motivación real nace cuando recuerdas por qué importa."></button>
+    <span class="ambient-glyph glyph-orbit g6" aria-hidden="true"></span>
+    <span class="ambient-glyph glyph-link g7" aria-hidden="true"></span>
+    <span class="ambient-glyph glyph-wave g8" aria-hidden="true"></span>
+    <span class="ambient-glyph glyph-eye g9" aria-hidden="true"></span>
+    <span class="ambient-glyph glyph-anchor g10" aria-hidden="true"></span>
+  </div>
+
+  <!-- ─── HUD OVERLAY ─── -->
+  <div class="hud-overlay">
+    <div class="hud-corner hud-tl"></div>
+    <div class="hud-corner hud-tr"></div>
+    <div class="hud-corner hud-bl"></div>
+    <div class="hud-corner hud-br"></div>
+  </div>
+
+  <!-- ─── NAVEGACIÓN ─── -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-brand">
+      <span class="nav-icon">◈</span>
+      <span>PILOTO EMOCIONAL</span>
+    </div>
+    <div class="nav-progress" id="navProgress">
+      <div class="nav-progress-fill" id="navProgressFill"></div>
+    </div>
+    <div class="mission-meter">
+      <span id="missionPercent">0%</span>
+      <span id="missionStage">Inicio</span>
+      <strong id="missionTopic">Inteligencia intrapersonal</strong>
+    </div>
+    <div class="nav-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">EN ÓRBITA</span>
+    </div>
+  </nav>
+
+  <aside class="pilot-log" id="pilotLog" aria-label="Bitácora del piloto emocional">
+    <div class="pilot-log-top">
+      <div>
+        <span class="pilot-log-label">BITÁCORA DEL PILOTO</span>
+        <strong id="pilotLogStage">Sistema 00</strong>
+      </div>
+      <div class="pilot-log-orbit" id="pilotLogOrbit">0</div>
+    </div>
+    <p id="pilotLogQuote">Antes de despegar, mira hacia adentro: ahí empieza la navegación.</p>
+    <div class="pilot-log-signal">
+      <span id="pilotLogSignal">Señal: autoconciencia</span>
+    </div>
+    <div class="pilot-constellation" id="pilotConstellation">
+      <span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </aside>
+
+  <div class="echo-message" id="echoMessage" role="status" aria-live="polite"></div>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 0 — INTRO / CABINA
+  ════════════════════════════════════════════ -->
+  <section class="section section-intro" id="sectionIntro" data-section="0">
+    <div class="intro-cockpit">
+      <div class="cockpit-scanlines"></div>
+
+      <div class="intro-header">
+        <div class="intro-badge">SENTIRSE --COLEGIATURA · v2.4</div>
+        <h1 class="intro-title">
+          <span class="title-line line1">EL VIAJE DEL</span>
+          <span class="title-line line2">PILOTO</span>
+          <span class="title-line line3 accent">EMOCIONAL</span>
+        </h1>
+      </div>
+
+      <div class="intro-question-wrap">
+        <div class="intro-question">
+          <div class="q-label">Nicolás Espinosa<br/><em></em>Sebastián Suárez<br/><em></em>Samuel Salazar<br/><em></em>Daniella Barros
+          </div>
+          <p class="q-text">¿QUIÉN ESTÁ TOMANDO EL CONTROL HOY?<br/><em>¿TUS EMOCIONES O TÚ?</em></p>
+        </div>
+      </div>
+
+      <div class="intro-panels">
+        <div class="panel-stat">
+          <div class="panel-stat-value" data-count="7">0</div>
+          <div class="panel-stat-label">Emociones mapeadas</div>
+        </div>
+        <div class="panel-stat">
+          <div class="panel-stat-value" data-count="6">0</div>
+          <div class="panel-stat-label">Sistemas activos</div>
+        </div>
+        <div class="panel-stat">
+          <div class="panel-stat-value" data-count="1">0</div>
+          <div class="panel-stat-label">Misión final</div>
+        </div>
+      </div>
+
+      <div class="mission-route">
+        <button class="route-node active" data-target="#sectionRadar"><span>01</span><strong>Reconocer</strong></button>
+        <div class="route-line"></div>
+        <button class="route-node" data-target="#sectionTimon"><span>02</span><strong>Regular</strong></button>
+        <div class="route-line"></div>
+        <button class="route-node" data-target="#sectionTrip"><span>03</span><strong>Conectar</strong></button>
+        <div class="route-line"></div>
+        <button class="route-node" data-target="#sectionMision"><span>04</span><strong>Avanzar</strong></button>
+        <div class="route-line"></div>
+        <button class="route-node" data-target="#sectionRetos"><span>05</span><strong>Escena</strong></button>
+      </div>
+
+      <button class="btn-launch" id="btnLaunch">
+        <span class="btn-launch-inner">
+          <span class="btn-icon">▶</span>
+          INICIAR MISIÓN
+        </span>
+        <div class="btn-glow"></div>
+      </button>
+
+      <div class="intro-scroll-hint">
+        <div class="scroll-arrow"></div>
+        <span>DESLIZA PARA NAVEGAR</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 1 — RADAR EMOCIONAL
+  ════════════════════════════════════════════ -->
+  <section class="section section-radar" id="sectionRadar" data-section="1">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 01</div>
+        <h2 class="section-title">RADAR EMOCIONAL</h2>
+        <p class="section-subtitle">Selecciona la emoción que detectas ahora mismo en tu interior.</p>
+      </div>
+
+      <div class="radar-layout">
+        <!-- Radar visual -->
+        <div class="radar-screen">
+          <canvas id="radarCanvas" width="320" height="320"></canvas>
+          <div class="radar-echo" id="radarEcho">
+            <img id="radarEchoImg" src="images/miedo.jpeg" alt="Eco emocional" />
+          </div>
+          <div class="radar-center-dot"></div>
+          <div class="radar-label-ring">
+            <div class="radar-emotion-dot" data-emotion="miedo"    style="--angle:0deg"    ></div>
+            <div class="radar-emotion-dot" data-emotion="tristeza" style="--angle:51deg"   ></div>
+            <div class="radar-emotion-dot" data-emotion="ira"      style="--angle:102deg"  ></div>
+            <div class="radar-emotion-dot" data-emotion="alegria"  style="--angle:153deg"  ></div>
+            <div class="radar-emotion-dot" data-emotion="calma"    style="--angle:204deg"  ></div>
+            <div class="radar-emotion-dot" data-emotion="frustracion" style="--angle:255deg"></div>
+            <div class="radar-emotion-dot" data-emotion="entusiasmo"  style="--angle:306deg"></div>
+          </div>
+        </div>
+
+        <div class="radar-control-deck">
+          <!-- Selector de emociones -->
+          <div class="emotion-grid">
+            <button class="emotion-btn" data-emotion="miedo">
+              <img class="emotion-img" src="images/miedo.jpeg" alt="Miedo" />
+              <span class="emo-name">MIEDO</span>
+            </button>
+            <button class="emotion-btn" data-emotion="tristeza">
+              <img class="emotion-img emotion-crop-tristeza" src="images/tristeza.jpeg" alt="Tristeza" />
+              <span class="emo-name">TRISTEZA</span>
+            </button>
+            <button class="emotion-btn" data-emotion="ira">
+              <img class="emotion-img" src="images/furia.jpeg" alt="Ira" />
+              <span class="emo-name">IRA</span>
+            </button>
+            <button class="emotion-btn" data-emotion="alegria">
+              <img class="emotion-img" src="images/Alegría.PNG" alt="Alegría" />
+              <span class="emo-name">ALEGRÍA</span>
+            </button>
+            <button class="emotion-btn" data-emotion="calma">
+              <img class="emotion-img" src="images/tranquilidad.jpeg" alt="Calma" />
+              <span class="emo-name">CALMA</span>
+            </button>
+            <button class="emotion-btn" data-emotion="frustracion">
+              <img class="emotion-img emotion-crop-frustracion" src="images/frustración.gif" alt="Frustración" />
+              <span class="emo-name">FRUSTRACIÓN</span>
+            </button>
+            <button class="emotion-btn" data-emotion="entusiasmo">
+              <img class="emotion-img" src="images/entusiasmo.jpeg" alt="Entusiasmo" />
+              <span class="emo-name">ENTUSIASMO</span>
+            </button>
+          </div>
+
+          <aside class="emotion-brief" id="emotionBrief">
+            <div class="emotion-portrait">
+              <img id="emotionPortrait" src="images/miedo.jpeg" alt="Lectura emocional" />
+            </div>
+            <div class="emotion-brief-copy">
+              <div class="eb-label">LECTURA DEL RADAR</div>
+              <h3 id="emotionBriefTitle">Elige una emoción</h3>
+              <p id="emotionBriefText">El sistema mostrará su mensaje, su carga y una forma saludable de encauzarla.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Panel de datos de emoción -->
+      <div class="emotion-data-panel" id="emotionPanel">
+        <div class="edp-placeholder">
+          <span>◈ Selecciona una emoción para analizarla</span>
+        </div>
+        <div class="edp-content" id="edpContent" style="display:none">
+          <div class="edp-row">
+            <div class="edp-block">
+              <div class="edp-block-label">INTENSIDAD</div>
+              <div class="edp-bar-wrap">
+                <div class="edp-bar" id="edpBar"></div>
+              </div>
+              <div class="edp-bar-value" id="edpBarVal"></div>
+            </div>
+            <div class="edp-block">
+              <div class="edp-block-label">SEÑAL CORPORAL</div>
+              <div class="edp-value" id="edpBody"></div>
+            </div>
+          </div>
+          <div class="edp-row">
+            <div class="edp-block">
+              <div class="edp-block-label">POSIBLE CAUSA</div>
+              <div class="edp-value" id="edpCause"></div>
+            </div>
+            <div class="edp-block">
+              <div class="edp-block-label">MENSAJE</div>
+              <div class="edp-value highlight" id="edpMessage"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 3 — TIMÓN EMOCIONAL
+  ════════════════════════════════════════════ -->
+  <section class="section section-timon" id="sectionTimon" data-section="2">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 02</div>
+        <h2 class="section-title">TIMÓN EMOCIONAL</h2>
+        <p class="section-subtitle">No elimines tus emociones: dirígelas hacia donde te lleven más lejos.</p>
+      </div>
+
+      <div class="timon-layout">
+        <div class="timon-emotions">
+          <div class="timon-emo active" data-timon="enojo">
+            <img class="timon-emo-img" src="images/furia.jpeg" alt="Enojo" />
+            <div class="timon-emo-name">ENOJO</div>
+          </div>
+          <div class="timon-emo" data-timon="miedo">
+            <img class="timon-emo-img" src="images/miedo.jpeg" alt="Miedo" />
+            <div class="timon-emo-name">MIEDO</div>
+          </div>
+          <div class="timon-emo" data-timon="tristeza">
+            <img class="timon-emo-img" src="images/tristeza.jpeg" alt="Tristeza" />
+            <div class="timon-emo-name">TRISTEZA</div>
+          </div>
+          <div class="timon-emo" data-timon="alegria">
+            <img class="timon-emo-img" src="images/Alegría.PNG" alt="Alegría" />
+            <div class="timon-emo-name">ALEGRÍA</div>
+          </div>
+          <div class="timon-emo" data-timon="frustracion">
+            <img class="timon-emo-img" src="images/frustración.gif" alt="Frustración" />
+            <div class="timon-emo-name">FRUSTRACIÓN</div>
+          </div>
+        </div>
+
+        <div class="timon-routes" id="timonRoutes">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <div class="timon-chosen" id="timonChosen" style="display:none">
+        <div class="tc-label">RUTA ELEGIDA</div>
+        <div class="tc-content" id="tcContent"></div>
+        <div class="tc-result" id="tcResult"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 4 — MOTOR INTERNO
+  ════════════════════════════════════════════ -->
+  <section class="section section-motor" id="sectionMotor" data-section="3">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 03</div>
+        <h2 class="section-title">MOTOR INTERNO</h2>
+        <p class="section-subtitle">Descubre qué combustible genuino impulsa tu nave.</p>
+      </div>
+
+      <div class="motor-quiz" id="motorQuiz">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+        </div>
+        <div class="quiz-step" id="quizStep">
+          <div class="quiz-q-num" id="quizQNum">1 / 4</div>
+          <div class="quiz-question" id="quizQuestion">Cargando...</div>
+          <div class="quiz-options" id="quizOptions">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="motor-result" id="motorResult" style="display:none">
+        <div class="motor-result-icon" id="motorResultIcon"></div>
+        <div class="motor-result-label">TU TIPO DE MOTOR ES</div>
+        <div class="motor-result-name" id="motorResultName"></div>
+        <div class="motor-result-desc" id="motorResultDesc"></div>
+        <button class="btn-secondary" id="btnRetakeQuiz">↺ REPETIR TEST</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 5 — TRIPULACIÓN
+  ════════════════════════════════════════════ -->
+  <section class="section section-tripulacion" id="sectionTrip" data-section="4">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 04</div>
+        <h2 class="section-title">COMUNICACIÓN CON LA TRIPULACIÓN</h2>
+        <p class="section-subtitle">Pon a prueba tu inteligencia interpersonal en situaciones reales.</p>
+      </div>
+
+      <div class="trip-layout">
+        <div class="trip-scenario" id="tripScenario">
+          <!-- populated by JS -->
+        </div>
+        <div class="trip-skills" id="tripSkills">
+          <div class="ts-title">HABILIDADES ACTIVADAS</div>
+          <div class="ts-badges" id="tsBadges"></div>
+          <div class="trip-gate" id="tripGateMsg">Elige una respuesta que active habilidades reales para poder avanzar.</div>
+        </div>
+      </div>
+
+      <div class="trip-nav">
+        <button class="btn-secondary" id="btnPrevScenario">← ANTERIOR</button>
+        <div class="trip-counter" id="tripCounter">1 / 4</div>
+        <button class="btn-secondary" id="btnNextScenario">SIGUIENTE →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 6 — ESTACIÓN DE APOYO
+  ════════════════════════════════════════════ -->
+  <section class="section section-apoyo" id="sectionApoyo" data-section="5">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 05</div>
+        <h2 class="section-title">ESTACIÓN DE APOYO EXTERNO</h2>
+        <p class="section-subtitle">Construye tu red de apoyo: la fuerza también viene de las conexiones.</p>
+      </div>
+
+      <div class="apoyo-network" id="apoyoNetwork">
+        <!-- Central node -->
+        <div class="apoyo-center">
+          <div class="apoyo-center-icon">🧑‍🚀</div>
+          <div class="apoyo-center-label">TÚ</div>
+        </div>
+        <!-- Stations -->
+        <div class="apoyo-stations" id="apoyoStations">
+          <div class="apoyo-station" data-station="familia">
+            <div class="as-icon">👨‍👩‍👧</div>
+            <div class="as-name">FAMILIA</div>
+            <button class="as-btn" data-station="familia">CONECTAR</button>
+          </div>
+          <div class="apoyo-station" data-station="amigos">
+            <div class="as-icon">👫</div>
+            <div class="as-name">AMIGOS</div>
+            <button class="as-btn" data-station="amigos">CONECTAR</button>
+          </div>
+          <div class="apoyo-station" data-station="docentes">
+            <div class="as-icon">🎓</div>
+            <div class="as-name">DOCENTES</div>
+            <button class="as-btn" data-station="docentes">CONECTAR</button>
+          </div>
+          <div class="apoyo-station" data-station="comunidad">
+            <div class="as-icon">🌐</div>
+            <div class="as-name">COMUNIDAD</div>
+            <button class="as-btn" data-station="comunidad">CONECTAR</button>
+          </div>
+          <div class="apoyo-station" data-station="espacios">
+            <div class="as-icon">🏠</div>
+            <div class="as-name">ESPACIOS SEGUROS</div>
+            <button class="as-btn" data-station="espacios">CONECTAR</button>
+          </div>
+          <div class="apoyo-station" data-station="referentes">
+            <div class="as-icon">⭐</div>
+            <div class="as-name">REFERENTES</div>
+            <button class="as-btn" data-station="referentes">CONECTAR</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="apoyo-strength">
+        <div class="as-label">FUERZA DE TU RED</div>
+        <div class="as-track">
+          <div class="as-fill" id="apoyoFill"></div>
+        </div>
+        <div class="as-message" id="apoyoMsg">Conecta con al menos una estación para comenzar</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 7 — MISIÓN FINAL
+  ════════════════════════════════════════════ -->
+  <section class="section section-mision" id="sectionMision" data-section="6">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA 06</div>
+        <h2 class="section-title">NAVEGACIÓN COMPLETA</h2>
+        <p class="section-subtitle">“Tuviste un mal día, discutiste con alguien, te sientes frustrado y tienes una meta pendiente”.</p>
+      </div>
+
+      <div class="mision-steps" id="misionSteps">
+        <div class="ms-step" data-step="0">
+          <div class="ms-step-num">01</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">IDENTIFICA LA EMOCIÓN</div>
+            <div class="ms-step-q">¿Qué sientes en este momento?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="0" data-val="frustración">Frustración</button>
+              <button class="ms-opt" data-step="0" data-val="enojo">Enojo</button>
+              <button class="ms-opt" data-step="0" data-val="tristeza">Tristeza</button>
+              <button class="ms-opt" data-step="0" data-val="agotamiento">Agotamiento</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-step locked" data-step="1">
+          <div class="ms-step-num">02</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">RECONOCE TU NECESIDAD</div>
+            <div class="ms-step-q">¿Qué necesitas para seguir mejor?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="1" data-val="descanso">Recuperar energía</button>
+              <button class="ms-opt" data-step="1" data-val="claridad">Ordenar mis ideas</button>
+              <button class="ms-opt" data-step="1" data-val="apoyo">Pedir apoyo</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-step locked" data-step="2">
+          <div class="ms-step-num">03</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">ENCAUZA LA EMOCIÓN</div>
+            <div class="ms-step-q">¿Cómo diriges esa emoción?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="2" data-val="límites">Defiendo mis límites</button>
+              <button class="ms-opt" data-step="2" data-val="estrategia">Ajusto la estrategia</button>
+              <button class="ms-opt" data-step="2" data-val="preparación">Me preparo mejor</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-step locked" data-step="3">
+          <div class="ms-step-num">04</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">ACTIVA TU MOTIVACIÓN</div>
+            <div class="ms-step-q">¿Qué te impulsa a seguir?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="3" data-val="propósito">Mi propósito personal</button>
+              <button class="ms-opt" data-step="3" data-val="crecimiento">Mi deseo de crecer</button>
+              <button class="ms-opt" data-step="3" data-val="valor">Lo que valoro</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-step locked" data-step="4">
+          <div class="ms-step-num">05</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">RESPONDE INTERPERSONALMENTE</div>
+            <div class="ms-step-q">¿Cómo tratas la discusión con esa persona?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="4" data-val="escucha">Escucho antes de responder</button>
+              <button class="ms-opt" data-step="4" data-val="asertividad">Expreso cómo me sentí</button>
+              <button class="ms-opt" data-step="4" data-val="tiempo">Pido tiempo para calmarme</button>
+            </div>
+          </div>
+        </div>
+        <div class="ms-step locked" data-step="5">
+          <div class="ms-step-num">06</div>
+          <div class="ms-step-content">
+            <div class="ms-step-title">ACTIVA EL APOYO EXTERNO</div>
+            <div class="ms-step-q">¿A quién acudes o reconoces como apoyo?</div>
+            <div class="ms-options">
+              <button class="ms-opt" data-step="5" data-val="amigo">Un amigo de confianza</button>
+              <button class="ms-opt" data-step="5" data-val="familia">Mi familia</button>
+              <button class="ms-opt" data-step="5" data-val="profesional">Un profesional</button>
+              <button class="ms-opt" data-step="5" data-val="soledad">Lo proceso solo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADO FINAL -->
+      <div class="mision-result" id="misionResult" style="display:none">
+        <div class="mr-glow"></div>
+        <div class="mr-icon">🚀</div>
+        <div class="mr-badge">NAVEGACIÓN EMOCIONAL COMPLETADA</div>
+        <h3 class="mr-title">Has estabilizado tu navegación emocional</h3>
+        <p class="mr-desc" id="mrDesc"></p>
+        <div class="mr-stats" id="mrStats"></div>
+        <button class="btn-secondary" id="btnGoRetos">IR A LA RULETA</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       SECCIÓN 8 — RULETA DE SITUACIONES
+  ════════════════════════════════════════════ -->
+  <section class="section section-retos" id="sectionRetos" data-section="7">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-tag">SISTEMA FINAL</div>
+        <h2 class="section-title">RUEDA DE ESCENAS</h2>
+        <p class="section-subtitle">Gira la ruleta, descubre una situación y prepara en un minuto una escena de cuatro roles.</p>
+      </div>
+
+      <div class="roleplay-layout">
+        <aside class="roulette-console">
+          <div class="roulette-shell" aria-label="Ruleta de situaciones">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel">
+              <span>01</span>
+              <span>02</span>
+              <span>03</span>
+              <span>04</span>
+              <span>05</span>
+              <span>06</span>
+              <span>07</span>
+            </div>
+          </div>
+
+          <button class="btn-launch roulette-start-btn" id="btnSpinScene" type="button">
+            <span class="btn-launch-inner">
+              <span class="btn-icon">▶</span>
+              <span class="spin-label">COMENZAR</span>
+            </span>
+            <div class="btn-glow"></div>
+          </button>
+
+          <p class="roulette-note">7 situaciones posibles · 4 roles por grupo · cada giro entrega una situación diferente.</p>
+          <div class="roulette-status" id="rouletteGroupStatus">Grupo 1 listo para jugar</div>
+        </aside>
+
+        <div class="scene-board">
+          <div class="scene-toolbar">
+            <div>
+              <div class="retos-mini-label">SITUACIÓN ASIGNADA</div>
+              <strong id="sceneNumber">Esperando ruleta</strong>
+            </div>
+            <div class="countdown-display" id="countdownDisplay">01:00</div>
+          </div>
+
+          <article class="scene-card" id="sceneCard">
+            <div class="scene-kicker">Presiona comenzar para iniciar</div>
+            <h3 id="sceneTitle">El grupo recibirá una situación de juego de rol.</h3>
+            <p id="sceneText">La ruleta girará y caerá en una situación distinta. Después tendrán un minuto para decidir quién interpreta cada rol. Al terminar el tiempo, sonará una campana.</p>
+          </article>
+
+          <div class="role-grid" id="roleGrid">
+            <div class="role-pill">Rol 1</div>
+            <div class="role-pill">Rol 2</div>
+            <div class="role-pill">Rol 3</div>
+            <div class="role-pill">Rol 4</div>
+          </div>
+
+          <div class="timer-actions">
+            <button class="btn-secondary" id="btnStartTimer" type="button" disabled>INICIAR 1 MINUTO</button>
+            <button class="btn-secondary" id="btnResetTimer" type="button" disabled>REINICIAR TIEMPO</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="retos-layout">
+        <aside class="retos-console">
+          <div class="retos-orb">
+            <img id="retoEmotionImg" src="images/tranquilidad.jpeg" alt="Emoción seleccionada" />
+          </div>
+          <div>
+            <div class="retos-console-label">LECTURA ACTUAL</div>
+            <h3 id="retoProfileTitle">Perfil pendiente</h3>
+            <p id="retoProfileText">Cada reto reparte turnos o roles para que todos participen de forma organizada.</p>
+          </div>
+          <div class="retos-focus">
+            <button class="reto-focus active" data-focus="auto">AUTO</button>
+            <button class="reto-focus" data-focus="miedo">MIEDO</button>
+            <button class="reto-focus" data-focus="enojo">ENOJO</button>
+            <button class="reto-focus" data-focus="tristeza">TRISTEZA</button>
+            <button class="reto-focus" data-focus="alegria">ALEGRÍA</button>
+            <button class="reto-focus" data-focus="frustracion">FRUSTRACIÓN</button>
+          </div>
+        </aside>
+
+        <div class="retos-board">
+          <div class="retos-toolbar">
+            <div>
+              <div class="retos-mini-label">RETO DEL DÍA</div>
+              <strong id="retoCount">0 retos activos</strong>
+            </div>
+            <button class="btn-secondary" id="btnRefreshRetos">GENERAR OTROS</button>
+          </div>
+          <div class="reto-cards" id="retoCards"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-cierre" id="sectionCierre">
+    <div class="section-container">
+      <div class="mission-close">
+        <div class="section-tag">CIERRE FINAL</div>
+        <h2 class="mission-close-title">Completa el viaje emocional</h2>
+        <button class="btn-launch mission-finish-btn" id="btnFinishMissionTop" type="button">
+          <span class="btn-launch-inner">
+            <span class="btn-icon">✓</span>
+            FINALIZAR MISIÓN
+          </span>
+          <div class="btn-glow"></div>
+        </button>
+        <button class="btn-launch small" id="btnFinishMission">FINALIZAR MISIÓN</button>
+        <div class="mission-close-card" id="missionCloseCard" style="display:none">
+          <div class="mr-badge">CIERRE DEL VIAJE EMOCIONAL</div>
+          <h3>Gracias por navegar hacia adentro y hacia los demás</h3>
+          <p>
+            Las emociones no son un obstáculo: son señales. Reconocerlas te da inteligencia intrapersonal;
+            encauzarlas te da dirección; compartirlas con respeto fortalece tu inteligencia interpersonal.
+            La motivación intrínseca aparece cuando recuerdas tu propósito, y el apoyo externo te recuerda
+            que pedir ayuda también es una forma de poder.
+          </p>
+          <p>
+            Si hoy alguien escuchó mejor, pidió apoyo, recibió una palabra bonita o entendió una emoción sin juzgarla,
+            entonces la misión ya valió la pena. Que este viaje no se quede en la pantalla: llévalo a tus conversaciones,
+            a tus decisiones y a la manera en que te tratas cuando algo no sale bien.
+          </p>
+          <strong>Gracias por participar. Misión emocional completada.</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">◈ PILOTO EMOCIONAL</span>
+      <span class="footer-copy">Navegando emociones · 2025</span>
+    </div>
+  </footer>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
