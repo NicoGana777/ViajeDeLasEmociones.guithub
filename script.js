@@ -588,6 +588,7 @@ const state = {
   currentScenario: 0,
   unlockedSkills: new Set(),
   scenarioPassed: new Set(),
+  tripCompletionShown: false,
   apoyoFlipped: [],
   apoyoLocked: false,
   apoyoMatched: new Set(),
@@ -1105,6 +1106,9 @@ function initTripulacionSection() {
     if (state.currentScenario < TRIP_SCENARIOS.length - 1) {
       state.currentScenario++;
       renderScenario('right');
+    } else {
+      showTripCompletionAnimation();
+      gsap.to(window, { duration: 1, scrollTo: '#sectionApoyo', ease: 'power3.inOut' });
     }
   });
 }
@@ -1113,6 +1117,8 @@ function renderScenario(dir) {
   const sc = TRIP_SCENARIOS[state.currentScenario];
   const container = document.getElementById('tripScenario');
   const counter = document.getElementById('tripCounter');
+  const completion = document.getElementById('tripCompletion');
+  if (completion) completion.remove();
   counter.textContent = `${state.currentScenario + 1} / ${TRIP_SCENARIOS.length}`;
   setTripGate(state.scenarioPassed.has(state.currentScenario)
     ? 'Habilidades suficientes activas. Puedes avanzar.'
@@ -1149,6 +1155,9 @@ function renderScenario(dir) {
           if (skills.length >= 3) {
             state.scenarioPassed.add(state.currentScenario);
             setTripGate('Respuesta completa: activaste habilidades suficientes para seguir avanzando.', false);
+            if (state.currentScenario === TRIP_SCENARIOS.length - 1) {
+              showTripCompletionAnimation();
+            }
           } else {
             state.scenarioPassed.delete(state.currentScenario);
             setTripGate('Aun faltan habilidades. Busca la opcion que combine escucha, respeto y accion concreta.', true);
@@ -1159,6 +1168,62 @@ function renderScenario(dir) {
       gsap.fromTo(container, { opacity: 0, x: dir === 'right' ? 30 : (dir === 'left' ? -30 : 0) }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' });
     }
   });
+}
+
+function showTripCompletionAnimation() {
+  if (state.tripCompletionShown) return;
+  state.tripCompletionShown = true;
+
+  const layout = document.querySelector('#sectionTrip .trip-layout');
+  const scenario = document.getElementById('tripScenario');
+  const skills = document.getElementById('tripSkills');
+  const nextBtn = document.getElementById('btnNextScenario');
+  if (!layout || !scenario || !skills) return;
+
+  const seal = document.createElement('div');
+  seal.className = 'trip-completion-seal';
+  seal.id = 'tripCompletion';
+  seal.innerHTML = `
+    <div class="trip-completion-orbit"></div>
+    <div class="trip-completion-copy">
+      <span>SISTEMA COMPLETADO</span>
+      <strong>Tripulación sincronizada</strong>
+      <p>Activaste empatía, escucha, asertividad, respeto y cooperación. Ya puedes avanzar con una respuesta más humana y consciente.</p>
+    </div>
+  `;
+  layout.appendChild(seal);
+
+  scenario.classList.add('trip-system-complete');
+  skills.classList.add('trip-system-complete');
+  if (nextBtn) {
+    nextBtn.textContent = 'CONTINUAR →';
+    nextBtn.classList.add('mission-ready');
+  }
+
+  gsap.timeline()
+    .to('#sectionTrip .system-frame', {
+      boxShadow: '0 0 0 2px rgba(247,201,72,0.36), 0 0 70px rgba(239,125,154,0.35), inset 0 0 38px rgba(247,201,72,0.09)',
+      duration: 0.45,
+      ease: 'power2.out'
+    })
+    .fromTo(seal,
+      { autoAlpha: 0, y: 28, scale: 0.92 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.7)' },
+      '-=0.2'
+    )
+    .fromTo('.trip-completion-orbit',
+      { scale: 0.2, rotate: -120, autoAlpha: 0 },
+      { scale: 1, rotate: 0, autoAlpha: 1, duration: 0.7, ease: 'back.out(1.8)' },
+      '-=0.38'
+    )
+    .fromTo('#sectionTrip .skill-badge.active',
+      { scale: 1 },
+      { scale: 1.08, duration: 0.22, repeat: 3, yoyo: true, stagger: 0.04, ease: 'sine.inOut' },
+      '-=0.35'
+    );
+
+  createBurst(scenario);
+  pulseElement('#tripGateMsg', '#f7c948');
 }
 
 function updateSkillBadges(active) {
@@ -1258,8 +1323,7 @@ function createApoyoMemory() {
 
   const deck = shuffleArray([
     ...APOYO_MEMORY_CARDS,
-    ...APOYO_MEMORY_CARDS,
-    { id: 'yo', label: 'Yo también pido apoyo', icon: '🚀', single: true }
+    ...APOYO_MEMORY_CARDS
   ]);
 
   board.innerHTML = deck.map((card, index) => `
@@ -1552,8 +1616,12 @@ function resetRoleplayTimer(reactivateStart = true) {
 function updateRoleplayStatus() {
   const status = document.getElementById('rouletteGroupStatus');
   if (!status) return;
+  if (!roleplayState.spinQueue.length && roleplayState.groupNumber > ROLEPLAY_SITUATIONS.length) {
+    status.textContent = 'Ya salieron las 7 situaciones. El próximo grupo inicia una nueva ronda.';
+    return;
+  }
   const remaining = roleplayState.spinQueue.length || ROLEPLAY_SITUATIONS.length;
-  status.textContent = `Grupo ${roleplayState.groupNumber} listo · quedan ${remaining} situaciones antes de reiniciar.`;
+  status.textContent = `Grupo ${roleplayState.groupNumber} listo · quedan ${remaining} situaciones sin repetir.`;
 }
 
 function setCountdownDisplay(seconds) {
@@ -1908,6 +1976,7 @@ function initPilotLogDrag() {
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   log.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('.pilot-log-close')) return;
     if (event.button !== undefined && event.button !== 0) return;
     const rect = log.getBoundingClientRect();
     dragging = true;
@@ -1941,6 +2010,38 @@ function initPilotLogDrag() {
 
   log.addEventListener('pointerup', stopDrag);
   log.addEventListener('pointercancel', stopDrag);
+}
+
+function initPilotLogClose() {
+  const log = document.getElementById('pilotLog');
+  const closeBtn = document.getElementById('pilotLogClose');
+  if (!log || !closeBtn) return;
+
+  let reopenTimer = null;
+
+  const showLog = () => {
+    log.classList.remove('is-hidden');
+    gsap.fromTo(log,
+      { autoAlpha: 0, y: 18, scale: 0.96 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: 'power2.out', clearProps: 'transform,opacity,visibility' }
+    );
+  };
+
+  closeBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    window.clearTimeout(reopenTimer);
+    gsap.to(log, {
+      autoAlpha: 0,
+      y: 18,
+      scale: 0.96,
+      duration: 0.28,
+      ease: 'power2.in',
+      onComplete: () => {
+        log.classList.add('is-hidden');
+        reopenTimer = window.setTimeout(showLog, 30000);
+      }
+    });
+  });
 }
 
 function showEchoMessage(message) {
@@ -2037,6 +2138,9 @@ function updatePilotLog(sectionId) {
     dot.classList.toggle('active', index <= Math.max(entry.step - 1, 0));
   });
 
+  const log = document.getElementById('pilotLog');
+  if (log?.classList.contains('is-hidden')) return;
+
   gsap.fromTo('#pilotLog',
     { y: 12, autoAlpha: 0.72 },
     { y: 0, autoAlpha: 1, duration: 0.35, ease: 'power2.out', clearProps: 'transform,opacity,visibility' }
@@ -2125,4 +2229,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initMissionRouteGuide();
   initAmbientGlyphs();
   initPilotLogDrag();
+  initPilotLogClose();
 });
